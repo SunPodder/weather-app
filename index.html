@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Weather App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="style.css" >
+  <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" >
+  <meta name="description" content="Weather App. With open weather api" />
+  <meta name="theme-color" content="#000000" >
+</head>
+<body>
+  <form class="center">
+    <br>
+    <button onclick="getLocation()"><b class="fa fa-map-marker-alt"></b></button>
+    <input type="text" id="input" placeholder="Enter city name: " >
+    <button type="submit" ><b class="fa fa-search"></b></button>
+  </form>
+  <ul id="container" type="none">
+    <div id="container1" ></div>
+    <div id="container2" ></div>
+    <div id="container3" ></div>
+    <div id="container4" ></div>
+    <div id="container5" ></div>
+  </ul>
+  <footer class="center">
+    Weather App <i class="fa fa-sun"></i> By <b>Sun</b><br>
+    Weather Info - By <a href="https://openweatherapi.org/api" >OpenWeatherApi</a>
+  </footer>
+  <br><br>
+  <script type="text/javascript" src="script.js"></script>
+</body>
+</html>
