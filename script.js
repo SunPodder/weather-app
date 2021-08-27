@@ -1,4 +1,4 @@
-const api_key = "Get Your API Key from https://openweather.org/api",
+const api_key = "Get Your API Key from https://openweathermap.org/api",
   input = document.querySelector("#input"),
   form = document.querySelector("form"),
   container = document.querySelector("#container"),
