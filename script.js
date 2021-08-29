@@ -1,4 +1,4 @@
-const api_key = "Get Your API Key from https://openweathermap.org/api",
+const api_key = "3f0d9e3372aab53a19fc6f5527ec10cf",
   input = document.querySelector("#input"),
   form = document.querySelector("form"),
   container = document.querySelector("#container"),
@@ -7,8 +7,13 @@ const api_key = "Get Your API Key from https://openweathermap.org/api",
   container3 = document.querySelector("#container3"),
   container4 = document.querySelector("#container4"),
   container5 = document.querySelector("#container5")
+  var loader = document.querySelector("#loader")
+  loader = loader.querySelector("i")
 
-//Get data based on city name given by User
+const constraints = {
+  enableHighAccuracy: true
+}
+
 form.addEventListener("submit", e => {
   e.preventDefault()
   let cityName = input.value
@@ -16,25 +21,38 @@ form.addEventListener("submit", e => {
   getData(url)
 })
 
-//Function to fetch data from URL
 function getData(url){
+  loader.style.display = "flex"
+  container1.innerHTML = ""
+  container2.innerHTML = ""
+  container3.innerHTML = ""
+  container4.innerHTML = ""
+  container5.innerHTML = ""
+  
   fetch(url)
   .then(res => {
     return res.json()
   })
   .then(data => {
     let list = data.list
-    input.value = data.city.name
-    writeData(list)
+    if(data.cod == 404){
+      if(data.message == "city not found"){
+        alert(data.message + "\nTap the location button to get weather data of your nearest available city.")
+      }else{
+        alert(data.message)
+      }
+    }else{
+      input.value = data.city.name
+      writeData(list)
+    }
+    loader.style.display = "none"
   })
 }
 
 function writeData(list){
   list.forEach(item => {
     let li = document.createElement("li")
-    //Converting temperature from Kelvin to Celsius
     let temp = Math.round(+(item.main.temp) - 273) + "°C"
-      //minmum and maximum temperature incase you need them.
       /*min_temp = item.main.temp_min,
       max_temp = item.main.temp_max,*/
     let pressure = item.main.pressure,
@@ -46,7 +64,6 @@ function writeData(list){
     let dateTime = item.dt_txt,
       iconCode = weather.icon,
       main = weather.main,
-      //svg weather icon
       icon = `https://s3-us-west-2.amazonaws.com/s.cdpn.io/162656/${iconCode}.svg`;
     li.innerHTML = `
     <div class="card">
@@ -64,7 +81,6 @@ function writeData(list){
     </details>
     </div>
     `
-    console.log(iconCode)
     if(list.indexOf(item) <= 7){
       container1.appendChild(li)
     }else if(list.indexOf(item) <= 15){
@@ -76,27 +92,23 @@ function writeData(list){
     }else if(list.indexOf(item) <= 39){
       container5.appendChild(li)
     }
-   // document.write(JSON.stringify(item))
   })
 }
 function getLocation(){
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(useLocation, onErr, constraints)
   }else{
-    alert("Geo Location isn't supported by your browser. Please enter your city name in the input field")
+    alert("Geo Location isn't supported by your browser.")
   }
 }
-const constraints = {
-  enableHighAccuracy: true
-}
-//Get weather data based on GPS coordinates
+getLocation()
+
 function useLocation(pos){
   let lat = pos.coords.latitude
   let lon = pos.coords.longitude
   let url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${api_key}`
   getData(url)
 }
-//incase of geo location error
 function onErr(err){
   alert("Please allow location access.\nError: " + err.message)
 }
