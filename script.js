@@ -24,6 +24,7 @@ function getData(url){
   })
   .then(data => {
     let list = data.list
+    input.value = data.city.name
     writeData(list)
   })
 }
