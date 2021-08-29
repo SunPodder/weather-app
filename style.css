@@ -5,6 +5,18 @@ body{
   color:white;
   font-size:3.8vw;
 }
+#loader > *{
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  font-size: 15vw;
+}
 .center{
   text-align:center;
 }
