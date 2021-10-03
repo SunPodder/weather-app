@@ -22,14 +22,15 @@ body{
 }
 a{
   text-decoration:none;
-  color:yellow;
+  color:white;
 }
 .card{
-  background:#777;
+  background:#eee;
   padding:4vw;
   margin:4vw;
   width:60vw;
   border-radius:7vw;
+  color:black;
 }
 summary:hover {
   outline:none;
@@ -71,4 +72,10 @@ button:hover, button{
 form > button[onclick="getLocation()"]{
   border-radius:6vw 0 0 6vw;
   margin-right:-2vw;
+}
+.fab{
+  font-size:7vw;
+  width:15vw;
+  display:flex;
+  align-items:center;
 }
