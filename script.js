@@ -1,4 +1,4 @@
-const api_key = "3f0d9e3372aab53a19fc6f5527ec10cf",
+const api_key = "Your API Key",
   input = document.querySelector("#input"),
   form = document.querySelector("form"),
   container = document.querySelector("#container"),
@@ -7,7 +7,7 @@ const api_key = "3f0d9e3372aab53a19fc6f5527ec10cf",
   container3 = document.querySelector("#container3"),
   container4 = document.querySelector("#container4"),
   container5 = document.querySelector("#container5")
-  var loader = document.querySelector("#loader")
+var loader = document.querySelector("#loader")
   loader = loader.querySelector("i")
 
 const constraints = {
@@ -16,9 +16,18 @@ const constraints = {
 
 form.addEventListener("submit", e => {
   e.preventDefault()
-  let cityName = input.value
-  let url = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${api_key}`
-  getData(url)
+  if(checkStatus()){
+    let cityName = input.value
+    if(cityName != ""){
+      let url = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${api_key}`
+      getData(url)
+    }else if(localStorage.latitude && localStorage.longitude){
+      let lat = localStorage.latitude
+      let lon = localStorage.longitude
+      let url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${api_key}`
+      getData(url)
+    }
+  }
 })
 
 function getData(url){
@@ -28,7 +37,6 @@ function getData(url){
   container3.innerHTML = ""
   container4.innerHTML = ""
   container5.innerHTML = ""
-  
   fetch(url)
   .then(res => {
     return res.json()
@@ -37,9 +45,9 @@ function getData(url){
     let list = data.list
     if(data.cod == 404){
       if(data.message == "city not found"){
-        alert(data.message + "\nTap the location button to get weather data of your nearest available city.")
+        container1.innerHTML = data.message + "\nTap the location button to get weather data of your nearest available city."
       }else{
-        alert(data.message)
+        container1.innerHTML = data.message
       }
     }else{
       input.value = data.city.name
@@ -50,9 +58,10 @@ function getData(url){
 }
 
 function writeData(list){
-  list.forEach(item => {
+    container1.innerHTML = "" 
+    list.forEach(item => {
     let li = document.createElement("li")
-    let temp = Math.round(+(item.main.temp) - 273) + "°C"
+    let temp = Math.round(+(item.main.temp) - 273)
       /*min_temp = item.main.temp_min,
       max_temp = item.main.temp_max,*/
     let pressure = item.main.pressure,
@@ -73,7 +82,7 @@ function writeData(list){
     <details>
     <summary>More Details</summary>
     <br>
-    <b>Temp:</b> ${temp}<br>
+    <b>Temp:</b> ${temp}&#176;C<br>
     <b>Pressure:</b> ${pressure}<br>
     <b>Humidity:</b> ${humidity}<br>
     <b>Wind Speed:</b> ${wind}<br>
@@ -95,10 +104,12 @@ function writeData(list){
   })
 }
 function getLocation(){
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(useLocation, onErr, constraints)
-  }else{
-    alert("Geo Location isn't supported by your browser.")
+  if(checkStatus()){
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(useLocation, onErr, constraints)
+    }else{
+      container1.innerHTML = "Geo Location isn't supported by your phone. Please use the search bar."
+    }
   }
 }
 getLocation()
@@ -108,7 +119,28 @@ function useLocation(pos){
   let lon = pos.coords.longitude
   let url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${api_key}`
   getData(url)
+  localStorage.latitude = lat
+  localStorage.longitude = lon
 }
 function onErr(err){
-  alert("Please allow location access.\nError: " + err.message)
+  if(checkStatus()){
+    if(localStorage.latitude && localStorage.longitude){
+      let lat = localStorage.latitude
+      let lon = localStorage.longitude
+      let url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${api_key}`
+      getData(url)
+    }else{
+      loader.style.display = "none"
+      container1.innerHTML = `${err.message}<br><br>Can't get your location.<br>Please enable location permission and try again...<br><br>Or you can also search for your city using the search bar...`
+    }
+  }
 }
+function checkStatus(){
+  if(!navigator.onLine){
+    container1.innerHTML = "You are offline.<br>Please connect to a network to get Weather Data."
+    return false;
+  }else{
+    return true;
+  }
+}
+checkStatus()
